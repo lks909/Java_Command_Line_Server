@@ -13,7 +13,7 @@ public class Server {
 
     public static final int PORT = 8080;
     public static LinkedList<Handler> serverList = new LinkedList<>();
-    static final String[] AVAILABLE_COMMANDS = {"dir", "cd", "pwd", "!", "exit"};
+    static final String[] AVAILABLE_COMMANDS = {"dir", "cd", "pwd", "!", "exit", "write", "who"};
     static String currentDirectory = "";
 
     static {
@@ -46,9 +46,9 @@ public class Server {
         try {
             while (true) {
                 Socket socket = server.accept();
-                System.out.println("SIZE = " + serverList.size());
                 try {
                     serverList.add(new Handler(socket));
+                    System.out.println("SIZE = " + serverList.size());
                 } catch (IOException e) {
                     e.printStackTrace();
                     socket.close();

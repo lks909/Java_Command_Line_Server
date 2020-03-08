@@ -1,5 +1,3 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
@@ -8,9 +6,7 @@ public class ParsedLogicalCommand {
     private ParsedCommand secondCommand;
     private boolean isLogical;
     private String logicalOperator; //  (" && " / " || " / none)
-    BufferedReader in;
-    BufferedWriter out;
-    Directory currentHandlerDirectory;
+    Handler handler;
 
     ParsedCommand getFirstCommand() {
         return firstCommand;
@@ -32,10 +28,8 @@ public class ParsedLogicalCommand {
         return logicalOperator;
     }
 
-    public ParsedLogicalCommand(String line, BufferedReader in, BufferedWriter out, Directory dir) {
-        this.in = in;
-        this.out = out;
-        currentHandlerDirectory = dir;
+    public ParsedLogicalCommand(String line, Handler handler) {
+        this.handler = handler;
         if (line.contains("&&")) {
             isLogical = true;
             logicalOperator = "&&";
@@ -53,10 +47,10 @@ public class ParsedLogicalCommand {
             } else {
                 commands = line.split(" \\|\\| ");
             }
-            firstCommand = new ParsedCommand(commands[0], in, out, currentHandlerDirectory);
-            secondCommand = new ParsedCommand(commands[1], in, out, currentHandlerDirectory);
+            firstCommand = new ParsedCommand(commands[0], handler);
+            secondCommand = new ParsedCommand(commands[1], handler);
         } else {
-            firstCommand = new ParsedCommand(line, in, out, currentHandlerDirectory);
+            firstCommand = new ParsedCommand(line, handler);
         }
     }
 

@@ -5,4 +5,6 @@
     <entry key="cd">CdCommand</entry>
     <entry key="pwd">PwdCommand</entry>
     <entry key="!">StartProcess</entry>
+    <entry key="write">WriteCommand</entry>
+    <entry key="who">WhoCommand</entry>
 </properties>

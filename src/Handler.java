@@ -19,6 +19,22 @@ class Handler extends Thread {
         start();
     }
 
+    Directory getCurrentDirectory() {
+        return currentHandlerDirectory;
+    }
+
+    BufferedWriter getWriter() {
+        return out;
+    }
+
+    BufferedReader getReader() {
+        return in;
+    }
+
+    Socket getSocket() {
+        return socket;
+    }
+
     @Override
     public void run() {
         String command;
@@ -27,13 +43,14 @@ class Handler extends Thread {
             while (true) {
                 Server.send("Enter command:", out);
                 command = in.readLine();
-                ParsedLogicalCommand plc = new ParsedLogicalCommand(command, in, out, currentHandlerDirectory);
+                ParsedLogicalCommand plc = new ParsedLogicalCommand(command, this);
                 if (command != null && !Arrays.asList(Server.AVAILABLE_COMMANDS).contains(plc.getFirstCommand().getCommand())
                         && !Arrays.asList(Server.AVAILABLE_COMMANDS).contains(plc.getSecondCommand().getCommand())) {
                     Server.send("Error: Unknown command.", out);
                     continue;
                 }
                 if (plc.getFirstCommand().getCommand().equals("exit")) {
+                    Server.serverList.remove(this);
                     break;
                 }
                 int commandExitCode = plc.run();
@@ -52,6 +69,12 @@ class Handler extends Thread {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                this.getSocket().close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class StartProcess implements Command {
 
@@ -78,8 +77,10 @@ public class StartProcess implements Command {
     }
 
     @Override
-    public int execute(ArrayList<String> args, BufferedReader in, BufferedWriter out, Directory dir) {
+    public int execute(ArrayList<String> args, Handler handler) {
         try {
+            BufferedWriter out = handler.getWriter();
+            BufferedReader in = handler.getReader();
             ProcessBuilder procBuilder = new ProcessBuilder(args);
             Process process = procBuilder.start();
             InputStream err = process.getErrorStream();

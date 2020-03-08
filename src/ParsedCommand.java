@@ -1,5 +1,3 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,9 +6,7 @@ import java.util.ArrayList;
 public class ParsedCommand {
     private String command;
     private ArrayList<String> args;
-    BufferedReader in;
-    BufferedWriter out;
-    Directory currentHandlerDirectory;
+    Handler handler;
 
     String getCommand() {
         return command;
@@ -21,10 +17,8 @@ public class ParsedCommand {
     }
 
 
-    public ParsedCommand(String line, BufferedReader in, BufferedWriter out, Directory dir) {
-        this.in = in;
-        this.out = out;
-        currentHandlerDirectory = dir;
+    public ParsedCommand(String line, Handler handler) {
+        this.handler = handler;
         args = new ArrayList<String>();
         String parts[] = line.split(" ");
         if (parts != null) {
@@ -41,8 +35,8 @@ public class ParsedCommand {
         String className = Server.parseConfigXml(command);
         Class c = Class.forName(className);
         Object obj = c.newInstance();
-        Method method = c.getMethod("execute", ArrayList.class, BufferedReader.class, BufferedWriter.class, Directory.class);
-        Object methodRes = method.invoke(obj, args, in, out, currentHandlerDirectory);
+        Method method = c.getMethod("execute", ArrayList.class, Handler.class);
+        Object methodRes = method.invoke(obj, args, handler);
         int exitCode = (int) methodRes;
         return exitCode;
     }
